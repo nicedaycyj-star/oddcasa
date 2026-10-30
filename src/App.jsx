@@ -31,17 +31,17 @@ const CHAPTERS = [
 
 const FloatingKeyword = ({ text, index, onClick }) => {
   const [coords] = useState(() => {
-    // 사용자가 만족한 '중앙' 느낌을 유지하기 위해 왼쪽 베이스 유지
-    // 대신 좌우/상하로 더 넓게 퍼지도록 범위 조정
-    const leftBase = 8 + (Math.random() * 25); // 8% ~ 33% 사이로 퍼뜨림
-    const topBase = 12 + (index * 12); // 세로 간격 확보
+  const [coords] = useState(() => {
+    // 화면 전체(5% ~ 85%)를 사용하도록 범위를 대폭 넓힘
+    const leftBase = 5 + (Math.random() * 80); 
+    const topBase = 10 + (index * 11); 
 
     return {
       left: `${leftBase}%`,
       top: `${topBase}%`,
-      randomX: Math.random() * 20 - 10, // 더 넓은 유영 범위
-      randomY: Math.random() * 20 - 10,
-      duration: 7 + Math.random() * 3,
+      randomX: Math.random() * 30 - 15, // 유영 범위 확대
+      randomY: Math.random() * 30 - 15,
+      duration: 6 + Math.random() * 4,
       delay: Math.random() * 2
     };
   });
@@ -188,36 +188,37 @@ export default function App() {
               </div>
 
               {/* Bottom UI - Cauldron Restored */}
-              <div className="pb-10 pt-4 flex flex-col items-center gap-6 shrink-0">
-                <div className="relative scale-90">
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-[#a61c1c] rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-lg z-20">
+                {/* Cauldron Container - 확실한 시각적 분리 */}
+                <div className="relative scale-110">
+                  <div className="absolute -top-2 -right-2 w-7 h-7 bg-[#a61c1c] rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-lg z-20 border border-[#f8f1e1]">
                     {selectedItems.length}
                   </div>
                   
-                  {/* Cauldron Body */}
-                  <div className="relative w-24 h-18 bg-[#1a1a1a] rounded-b-[35px] rounded-t-[8px] border-b-2 border-black shadow-2xl overflow-hidden">
+                  {/* Cauldron Body - 배경색과 겹치지 않도록 테두리 및 그림자 강화 */}
+                  <div className="relative w-28 h-20 bg-[#0f0f0f] rounded-b-[45px] rounded-t-[10px] border-2 border-[#a61c1c]/40 shadow-[0_0_20px_rgba(0,0,0,0.5)] overflow-hidden">
                     {/* Bubbling Liquid */}
                     <motion.div 
-                      animate={{ height: `${Math.min(selectedItems.length * 6, 85)}%` }}
-                      className="absolute bottom-0 w-full bg-gradient-to-t from-[#ea580c] to-[#f59e0b] opacity-90 transition-all duration-700"
+                      animate={{ height: `${Math.min(selectedItems.length * 6, 90)}%` }}
+                      className="absolute bottom-0 w-full bg-gradient-to-t from-[#c2410c] to-[#fb923c] opacity-90 transition-all duration-1000"
                     />
                     {/* Rising Bubbles */}
                     <div className="absolute top-0 w-full h-full flex justify-around pointer-events-none">
-                       {[1,2,3].map(i => (
+                       {[1,2,3,4].map(i => (
                          <motion.div 
                            key={i}
-                           animate={{ y: [-5, -30], opacity: [0, 0.7, 0] }}
-                           transition={{ duration: 2, repeat: Infinity, delay: i * 0.6 }}
-                           className="w-1.5 h-1.5 bg-[#ffedd5] rounded-full"
+                           animate={{ y: [0, -40], opacity: [0, 0.8, 0], scale: [0.5, 1.2, 0.8] }}
+                           transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.7 }}
+                           className="w-2 h-2 bg-[#ffedd5] rounded-full blur-[1px]"
                          />
                        ))}
                     </div>
                     {/* Rim */}
-                    <div className="absolute top-0 w-full h-2 bg-[#0a0a0a] rounded-t-[8px]" />
+                    <div className="absolute top-0 w-full h-3 bg-[#1a1a1a] border-b border-black" />
                   </div>
-                  {/* Handles */}
-                  <div className="absolute -left-2 top-5 w-4 h-6 border-2 border-[#1a1a1a] rounded-full -z-10" />
-                  <div className="absolute -right-2 top-5 w-4 h-6 border-2 border-[#1a1a1a] rounded-full -z-10" />
+                  
+                  {/* Handles - 더 굵고 명확하게 */}
+                  <div className="absolute -left-3 top-6 w-6 h-8 border-[3px] border-[#0f0f0f] rounded-full -z-10" />
+                  <div className="absolute -right-3 top-6 w-6 h-8 border-[3px] border-[#0f0f0f] rounded-full -z-10" />
                 </div>
 
                 <button
