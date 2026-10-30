@@ -30,19 +30,19 @@ const CHAPTERS = [
 ];
 
 const FloatingKeyword = ({ text, index, onClick }) => {
-  // 사용자의 요청대로 배치 기준을 아예 왼쪽 끝(left: 5%~25% 사이)으로 설정
   const [coords] = useState(() => {
-    // 7개 키워드를 위해 세로로 나열하여 겹침을 방지하고 왼쪽 끝에 붙임
-    const leftBase = 5 + (Math.random() * 10); // 5% ~ 15% 사이로 극단적으로 왼쪽에 붙임
-    const topBase = 15 + (index * 11); // 위아래로 순차적 배치
+    // 사용자가 만족한 '중앙' 느낌을 유지하기 위해 왼쪽 베이스 유지
+    // 대신 좌우/상하로 더 넓게 퍼지도록 범위 조정
+    const leftBase = 8 + (Math.random() * 25); // 8% ~ 33% 사이로 퍼뜨림
+    const topBase = 12 + (index * 12); // 세로 간격 확보
 
     return {
       left: `${leftBase}%`,
       top: `${topBase}%`,
-      randomX: Math.random() * 4 - 2,
-      randomY: Math.random() * 4 - 2,
-      duration: 6 + Math.random() * 2,
-      delay: Math.random() * 1
+      randomX: Math.random() * 20 - 10, // 더 넓은 유영 범위
+      randomY: Math.random() * 20 - 10,
+      duration: 7 + Math.random() * 3,
+      delay: Math.random() * 2
     };
   });
 
@@ -62,11 +62,10 @@ const FloatingKeyword = ({ text, index, onClick }) => {
         y: { duration: coords.duration * 1.1, repeat: Infinity, ease: "easeInOut", delay: coords.delay },
         opacity: { duration: 0.2 }
       }}
-      className="absolute px-2.5 py-1 bg-white/10 border border-white/20 rounded-full shadow-sm text-[10px] font-medium text-white/90 whitespace-nowrap active:bg-white active:text-black transition-all z-10"
+      className="absolute px-3 py-1.5 bg-[#e8dec5] border border-[#4a0404]/20 rounded-full shadow-sm text-[11px] font-medium text-[#4a0404] whitespace-nowrap active:bg-[#4a0404] active:text-white transition-all z-10"
       style={{
         left: coords.left,
         top: coords.top,
-        textAlign: 'left'
       }}
     >
       {text}
@@ -106,10 +105,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1612] text-[#f8f1e1] font-serif selection:bg-[#f8f1e1] selection:text-black overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-[#f8f1e1] text-[#4a0404] font-serif selection:bg-[#4a0404] selection:text-white overflow-hidden flex flex-col">
       
-      {/* Header */}
-      <header className="p-6 flex flex-col items-center z-10 space-y-2 border-b border-white/10">
+      {/* Header - Odd Casa Aesthetic */}
+      <header className="p-8 flex flex-col items-center z-10 space-y-2 border-b border-[#4a0404]/10">
         <div className="flex items-center gap-3 text-[10px] tracking-[0.4em] text-[#a61c1c] uppercase font-bold">
           <span>✧ ODD CASA ADMISSION ✧</span>
         </div>
@@ -130,11 +129,11 @@ export default function App() {
               className="flex-1 flex flex-col justify-center items-center text-center space-y-10"
             >
               <div className="space-y-6">
-                <h1 className="text-4xl font-bold leading-tight text-[#f8f1e1]">
+                <h1 className="text-4xl font-bold leading-tight text-[#4a0404]">
                   요즘 진짜 어때요?<br />
-                  <span className="text-[#a61c1c] italic underline decoration-[#a61c1c]/30 underline-offset-8">숨겨진 진심</span>을 찾아봐요.
+                  <span className="text-[#a61c1c] italic underline decoration-[#a61c1c]/20 underline-offset-8">숨겨진 진심</span>을 찾아봐요.
                 </h1>
-                <p className="text-white/40 leading-relaxed text-sm">
+                <p className="text-[#4a0404]/40 leading-relaxed text-sm">
                   내 마음을 스쳐 지나가는 말들을<br />
                   항아리에 툭, 담아보세요.
                 </p>
@@ -160,8 +159,8 @@ export default function App() {
             >
               <div className="mt-8 text-center shrink-0">
                 <span className="text-[#a61c1c] font-bold text-[10px] uppercase tracking-[0.3em]">Chapter {currentChapter + 1}</span>
-                <h2 className="text-2xl font-bold mt-1">{CHAPTERS[currentChapter].title}</h2>
-                <p className="text-white/30 text-xs mt-1 italic">{CHAPTERS[currentChapter].description}</p>
+                <h2 className="text-2xl font-bold mt-1 text-[#4a0404]">{CHAPTERS[currentChapter].title}</h2>
+                <p className="text-[#4a0404]/30 text-xs mt-1 italic">{CHAPTERS[currentChapter].description}</p>
               </div>
 
               {/* Floating Area */}
@@ -181,26 +180,28 @@ export default function App() {
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="absolute inset-0 flex items-center justify-center text-white/20 italic text-xs"
+                    className="absolute inset-0 flex items-center justify-center text-[#4a0404]/20 italic text-xs"
                   >
                     이 챕터의 마음을 모두 담았습니다.
                   </motion.div>
                 )}
               </div>
 
-              {/* Bottom UI - Jar (Black Cauldron with Orange Bubbling) */}
+              {/* Bottom UI - Cauldron Restored */}
               <div className="pb-10 pt-4 flex flex-col items-center gap-6 shrink-0">
                 <div className="relative scale-90">
                   <div className="absolute -top-1 -right-1 w-6 h-6 bg-[#a61c1c] rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-lg z-20">
                     {selectedItems.length}
                   </div>
                   
-                  {/* Cauldron Design Restored */}
-                  <div className="relative w-24 h-18 bg-[#0a0a0a] rounded-b-[35px] rounded-t-[8px] border-b-2 border-white/5 shadow-2xl overflow-hidden">
+                  {/* Cauldron Body */}
+                  <div className="relative w-24 h-18 bg-[#1a1a1a] rounded-b-[35px] rounded-t-[8px] border-b-2 border-black shadow-2xl overflow-hidden">
+                    {/* Bubbling Liquid */}
                     <motion.div 
                       animate={{ height: `${Math.min(selectedItems.length * 6, 85)}%` }}
                       className="absolute bottom-0 w-full bg-gradient-to-t from-[#ea580c] to-[#f59e0b] opacity-90 transition-all duration-700"
                     />
+                    {/* Rising Bubbles */}
                     <div className="absolute top-0 w-full h-full flex justify-around pointer-events-none">
                        {[1,2,3].map(i => (
                          <motion.div 
@@ -211,10 +212,12 @@ export default function App() {
                          />
                        ))}
                     </div>
-                    <div className="absolute top-0 w-full h-2 bg-[#1a1a1a] rounded-t-[8px]" />
+                    {/* Rim */}
+                    <div className="absolute top-0 w-full h-2 bg-[#0a0a0a] rounded-t-[8px]" />
                   </div>
-                  <div className="absolute -left-2 top-5 w-4 h-6 border-2 border-[#0a0a0a] rounded-full -z-10" />
-                  <div className="absolute -right-2 top-5 w-4 h-6 border-2 border-[#0a0a0a] rounded-full -z-10" />
+                  {/* Handles */}
+                  <div className="absolute -left-2 top-5 w-4 h-6 border-2 border-[#1a1a1a] rounded-full -z-10" />
+                  <div className="absolute -right-2 top-5 w-4 h-6 border-2 border-[#1a1a1a] rounded-full -z-10" />
                 </div>
 
                 <button
@@ -272,8 +275,8 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      <footer className="p-6 text-center border-t border-white/5">
-        <p className="text-[8px] text-white/20 tracking-[0.3em] uppercase">
+      <footer className="p-6 text-center border-t border-[#4a0404]/5">
+        <p className="text-[8px] text-[#4a0404]/20 tracking-[0.3em] uppercase">
           ✧ odd casa: this record is for your heart only ✧
         </p>
       </footer>
