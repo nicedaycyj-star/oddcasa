@@ -29,11 +29,24 @@ const CHAPTERS = [
   }
 ];
 
-const FloatingKeyword = ({ text, onClick }) => {
-  // 랜덤 시작 위치 및 애니메이션 경로 생성
-  const randomX = Math.random() * 60 - 30; // -30 ~ 30
-  const randomY = Math.random() * 40 - 20; // -20 ~ 20
-  const duration = 3 + Math.random() * 2;
+const FloatingKeyword = ({ text, index, onClick }) => {
+  // 인덱스를 활용해 화면 영역을 분산 (왼쪽, 중간, 오른쪽 골고루)
+  const [coords] = useState(() => {
+    const section = index % 3; // 0: 왼쪽, 1: 중간, 2: 오른쪽
+    let leftBase;
+    if (section === 0) leftBase = Math.random() * 20 + 5; // 5% ~ 25%
+    else if (section === 1) leftBase = Math.random() * 20 + 35; // 35% ~ 55%
+    else leftBase = Math.random() * 20 + 65; // 65% ~ 85%
+
+    return {
+      left: `${leftBase}%`,
+      top: `${Math.random() * 70 + 10}%`, // 위아래 10%~80% 사이
+      randomX: Math.random() * 40 - 20,
+      randomY: Math.random() * 40 - 20,
+      duration: 3 + Math.random() * 4,
+      delay: Math.random() * 2
+    };
+  });
 
   return (
     <motion.button
@@ -42,25 +55,28 @@ const FloatingKeyword = ({ text, onClick }) => {
       animate={{ 
         opacity: 1, 
         scale: 1,
-        x: [0, randomX, 0],
-        y: [0, randomY, 0]
+        x: [0, coords.randomX, 0],
+        y: [0, coords.randomY, 0]
       }}
-      exit={{ scale: 0, y: 200, opacity: 0 }}
+      exit={{ scale: 0, y: 100, opacity: 0 }}
       transition={{ 
-        x: { duration, repeat: Infinity, ease: "easeInOut" },
-        y: { duration: duration * 1.2, repeat: Infinity, ease: "easeInOut" },
-        opacity: { duration: 0.5 }
+        x: { duration: coords.duration, repeat: Infinity, ease: "easeInOut", delay: coords.delay },
+        y: { duration: coords.duration * 1.2, repeat: Infinity, ease: "easeInOut", delay: coords.delay },
+        opacity: { duration: 0.3 }
       }}
-      className="absolute px-4 py-2 bg-white/80 backdrop-blur-sm border border-white rounded-full shadow-sm text-sm text-slate-700 whitespace-nowrap active:bg-blue-50"
+      className="absolute px-4 py-2 bg-white/80 backdrop-blur-sm border border-white/50 rounded-full shadow-sm text-[13px] text-slate-700 whitespace-nowrap active:bg-blue-50 active:scale-90 transition-all z-10"
       style={{
-        left: `${Math.random() * 60 + 10}%`,
-        top: `${Math.random() * 60 + 10}%`,
+        left: coords.left,
+        top: coords.top,
+        transform: 'translateX(-50%)' // 기준점을 중앙으로 잡아 쏠림 방지
       }}
     >
       {text}
     </motion.button>
   );
 };
+
+
 
 export default function App() {
   const [step, setStep] = useState('intro'); // intro, collection, result
@@ -157,13 +173,15 @@ export default function App() {
               {/* Floating Area */}
               <div className="flex-1 relative mt-4 overflow-hidden">
                 <AnimatePresence>
-                  {visibleKeywords.map((keyword) => (
+                  {visibleKeywords.map((keyword, idx) => (
                     <FloatingKeyword 
                       key={keyword} 
                       text={keyword} 
+                      index={idx}
                       onClick={handleKeywordClick} 
                     />
                   ))}
+
                 </AnimatePresence>
                 
                 {visibleKeywords.length === 0 && (
