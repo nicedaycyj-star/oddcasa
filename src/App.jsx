@@ -30,24 +30,19 @@ const CHAPTERS = [
 ];
 
 const FloatingKeyword = ({ text, index, onClick }) => {
-  // 중앙 쏠림 및 겹침 방지를 위한 격자형 배치 기반 랜덤 좌표
+  // 사용자의 요청대로 배치 기준을 아예 왼쪽 끝(left: 5%~25% 사이)으로 설정
   const [coords] = useState(() => {
-    // 7개 키워드를 위해 2열 4행 슬롯 구성
-    const col = index % 2; // 0, 1
-    const row = Math.floor(index / 2); // 0, 1, 2, 3
-    
-    // 왼쪽 열은 25% 중심, 오른쪽 열은 75% 중심
-    const leftBase = col === 0 ? 28 : 72;
-    // 행별 높이 조절 (상단 15%부터 시작)
-    const topBase = 15 + (row * 20);
+    // 7개 키워드를 위해 세로로 나열하여 겹침을 방지하고 왼쪽 끝에 붙임
+    const leftBase = 5 + (Math.random() * 10); // 5% ~ 15% 사이로 극단적으로 왼쪽에 붙임
+    const topBase = 15 + (index * 11); // 위아래로 순차적 배치
 
     return {
-      left: `${leftBase + (Math.random() * 10 - 5)}%`,
-      top: `${topBase + (Math.random() * 5 - 2.5)}%`,
-      randomX: Math.random() * 8 - 4,
-      randomY: Math.random() * 8 - 4,
-      duration: 7 + Math.random() * 3,
-      delay: Math.random() * 1.5
+      left: `${leftBase}%`,
+      top: `${topBase}%`,
+      randomX: Math.random() * 4 - 2,
+      randomY: Math.random() * 4 - 2,
+      duration: 6 + Math.random() * 2,
+      delay: Math.random() * 1
     };
   });
 
@@ -61,17 +56,17 @@ const FloatingKeyword = ({ text, index, onClick }) => {
         x: [0, coords.randomX, 0],
         y: [0, coords.randomY, 0]
       }}
-      exit={{ scale: 0, y: 30, opacity: 0 }}
+      exit={{ scale: 0, x: -20, opacity: 0 }}
       transition={{ 
         x: { duration: coords.duration, repeat: Infinity, ease: "easeInOut", delay: coords.delay },
-        y: { duration: coords.duration * 1.2, repeat: Infinity, ease: "easeInOut", delay: coords.delay },
+        y: { duration: coords.duration * 1.1, repeat: Infinity, ease: "easeInOut", delay: coords.delay },
         opacity: { duration: 0.2 }
       }}
-      className="absolute px-3 py-1.5 bg-white/80 border border-[#4a0404]/10 rounded-full shadow-sm text-[11px] font-medium text-[#4a0404] whitespace-nowrap active:bg-[#4a0404] active:text-white transition-all z-10"
+      className="absolute px-2.5 py-1 bg-white/10 border border-white/20 rounded-full shadow-sm text-[10px] font-medium text-white/90 whitespace-nowrap active:bg-white active:text-black transition-all z-10"
       style={{
         left: coords.left,
         top: coords.top,
-        transform: 'translateX(-50%)'
+        textAlign: 'left'
       }}
     >
       {text}
@@ -111,10 +106,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f1e1] text-[#4a0404] font-serif selection:bg-[#4a0404] selection:text-white overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-[#1a1612] text-[#f8f1e1] font-serif selection:bg-[#f8f1e1] selection:text-black overflow-hidden flex flex-col">
       
       {/* Header */}
-      <header className="p-6 flex flex-col items-center z-10 space-y-2 border-b border-[#4a0404]/5">
+      <header className="p-6 flex flex-col items-center z-10 space-y-2 border-b border-white/10">
         <div className="flex items-center gap-3 text-[10px] tracking-[0.4em] text-[#a61c1c] uppercase font-bold">
           <span>✧ ODD CASA ADMISSION ✧</span>
         </div>
@@ -135,11 +130,11 @@ export default function App() {
               className="flex-1 flex flex-col justify-center items-center text-center space-y-10"
             >
               <div className="space-y-6">
-                <h1 className="text-4xl font-bold leading-tight text-[#4a0404]">
+                <h1 className="text-4xl font-bold leading-tight text-[#f8f1e1]">
                   요즘 진짜 어때요?<br />
-                  <span className="text-[#a61c1c] italic underline decoration-[#a61c1c]/10 underline-offset-8">숨겨진 진심</span>을 찾아봐요.
+                  <span className="text-[#a61c1c] italic underline decoration-[#a61c1c]/30 underline-offset-8">숨겨진 진심</span>을 찾아봐요.
                 </h1>
-                <p className="text-[#4a0404]/50 leading-relaxed text-sm">
+                <p className="text-white/40 leading-relaxed text-sm">
                   내 마음을 스쳐 지나가는 말들을<br />
                   항아리에 툭, 담아보세요.
                 </p>
@@ -148,7 +143,7 @@ export default function App() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setStep('collection')}
-                className="px-10 py-4 bg-[#4a0404] text-[#f8f1e1] rounded-sm font-bold shadow-xl tracking-[0.3em] text-xs uppercase"
+                className="px-10 py-4 bg-[#a61c1c] text-white rounded-sm font-bold shadow-xl tracking-[0.3em] text-xs uppercase"
               >
                 항아리 챙기기
               </motion.button>
@@ -166,7 +161,7 @@ export default function App() {
               <div className="mt-8 text-center shrink-0">
                 <span className="text-[#a61c1c] font-bold text-[10px] uppercase tracking-[0.3em]">Chapter {currentChapter + 1}</span>
                 <h2 className="text-2xl font-bold mt-1">{CHAPTERS[currentChapter].title}</h2>
-                <p className="text-[#4a0404]/40 text-xs mt-1 italic">{CHAPTERS[currentChapter].description}</p>
+                <p className="text-white/30 text-xs mt-1 italic">{CHAPTERS[currentChapter].description}</p>
               </div>
 
               {/* Floating Area */}
@@ -186,22 +181,22 @@ export default function App() {
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="absolute inset-0 flex items-center justify-center text-[#4a0404]/20 italic text-xs"
+                    className="absolute inset-0 flex items-center justify-center text-white/20 italic text-xs"
                   >
                     이 챕터의 마음을 모두 담았습니다.
                   </motion.div>
                 )}
               </div>
 
-              {/* Bottom UI */}
+              {/* Bottom UI - Jar (Black Cauldron with Orange Bubbling) */}
               <div className="pb-10 pt-4 flex flex-col items-center gap-6 shrink-0">
                 <div className="relative scale-90">
                   <div className="absolute -top-1 -right-1 w-6 h-6 bg-[#a61c1c] rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-lg z-20">
                     {selectedItems.length}
                   </div>
                   
-                  {/* Cauldron Design */}
-                  <div className="relative w-24 h-18 bg-[#2d2620] rounded-b-[35px] rounded-t-[8px] border-b-2 border-[#4a0404]/20 shadow-xl overflow-hidden">
+                  {/* Cauldron Design Restored */}
+                  <div className="relative w-24 h-18 bg-[#0a0a0a] rounded-b-[35px] rounded-t-[8px] border-b-2 border-white/5 shadow-2xl overflow-hidden">
                     <motion.div 
                       animate={{ height: `${Math.min(selectedItems.length * 6, 85)}%` }}
                       className="absolute bottom-0 w-full bg-gradient-to-t from-[#ea580c] to-[#f59e0b] opacity-90 transition-all duration-700"
@@ -216,15 +211,15 @@ export default function App() {
                          />
                        ))}
                     </div>
-                    <div className="absolute top-0 w-full h-2 bg-[#1a1612] rounded-t-[8px]" />
+                    <div className="absolute top-0 w-full h-2 bg-[#1a1a1a] rounded-t-[8px]" />
                   </div>
-                  <div className="absolute -left-2 top-5 w-4 h-6 border-2 border-[#2d2620] rounded-full -z-10" />
-                  <div className="absolute -right-2 top-5 w-4 h-6 border-2 border-[#2d2620] rounded-full -z-10" />
+                  <div className="absolute -left-2 top-5 w-4 h-6 border-2 border-[#0a0a0a] rounded-full -z-10" />
+                  <div className="absolute -right-2 top-5 w-4 h-6 border-2 border-[#0a0a0a] rounded-full -z-10" />
                 </div>
 
                 <button
                   onClick={nextChapter}
-                  className="w-full py-4 bg-[#4a0404] text-[#f8f1e1] rounded-sm font-bold tracking-[0.3em] shadow-lg active:scale-95 transition-all uppercase text-xs"
+                  className="w-full py-4 bg-[#a61c1c] text-white rounded-sm font-bold tracking-[0.3em] shadow-lg active:scale-95 transition-all uppercase text-xs"
                 >
                   {currentChapter < CHAPTERS.length - 1 ? "Next Chapter" : "Close Jar"}
                 </button>
@@ -246,13 +241,13 @@ export default function App() {
                 
                 <div className="space-y-2">
                   <p className="text-[#4a0404]/30 font-bold uppercase tracking-widest text-[9px]">Admission Summary</p>
-                  <h2 className="text-3xl font-bold">
+                  <h2 className="text-3xl font-bold text-[#4a0404]">
                     "{selectedItems.length} Pieces"
                   </h2>
                 </div>
 
-                <div className="p-5 bg-[#f8f1e1]/50 rounded border border-[#4a0404]/5">
-                  <p className="text-[#4a0404]/70 leading-relaxed text-xs italic">
+                <div className="p-5 bg-[#f8f1e1]/50 rounded border border-[#4a0404]/5 text-[#4a0404]">
+                  <p className="leading-relaxed text-xs italic">
                     {selectedItems.length > 10 
                       ? "지금은 마음의 방어막이 조금 얇아진 상태군요. 괜찮은 척하느라 에너지를 많이 썼을 거예요. 오늘은 아무것도 증명하지 않아도 돼요."
                       : "생각보다 덤덤하게 잘 지나오고 있네요. 하지만 항아리에 담은 것만으로도 고민의 실체는 조금 더 선명해졌을 거예요."}
@@ -277,8 +272,8 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      <footer className="p-6 text-center border-t border-[#4a0404]/5">
-        <p className="text-[8px] text-[#4a0404]/20 tracking-[0.3em] uppercase">
+      <footer className="p-6 text-center border-t border-white/5">
+        <p className="text-[8px] text-white/20 tracking-[0.3em] uppercase">
           ✧ odd casa: this record is for your heart only ✧
         </p>
       </footer>
