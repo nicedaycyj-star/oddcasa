@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBasket, RefreshCcw, Share2, Heart } from 'lucide-react';
+import { Heart, RefreshCcw, Share2 } from 'lucide-react';
 
 const CHAPTERS = [
   {
@@ -30,20 +30,18 @@ const CHAPTERS = [
 ];
 
 const FloatingKeyword = ({ text, index, onClick }) => {
-  // 인덱스를 활용해 화면 영역을 분산 (왼쪽, 중간, 오른쪽 골고루)
+  // 우측 쏠림을 방지하기 위해 중심축을 왼쪽으로 이동 (12%, 38%, 64%)
   const [coords] = useState(() => {
-    const section = index % 3; // 0: 왼쪽, 1: 중간, 2: 오른쪽
-    let leftBase;
-    if (section === 0) leftBase = Math.random() * 20 + 5; // 5% ~ 25%
-    else if (section === 1) leftBase = Math.random() * 20 + 35; // 35% ~ 55%
-    else leftBase = Math.random() * 20 + 65; // 65% ~ 85%
+    const section = index % 3; 
+    const centers = [12, 38, 64]; 
+    const leftBase = centers[section] + (Math.random() * 8 - 4);
 
     return {
       left: `${leftBase}%`,
-      top: `${Math.random() * 70 + 10}%`, // 위아래 10%~80% 사이
-      randomX: Math.random() * 40 - 20,
-      randomY: Math.random() * 40 - 20,
-      duration: 3 + Math.random() * 4,
+      top: `${(Math.floor(index / 3) * 22) + 12 + (Math.random() * 6)}%`,
+      randomX: Math.random() * 15 - 7.5,
+      randomY: Math.random() * 15 - 7.5,
+      duration: 5 + Math.random() * 3,
       delay: Math.random() * 2
     };
   });
@@ -64,11 +62,11 @@ const FloatingKeyword = ({ text, index, onClick }) => {
         y: { duration: coords.duration * 1.2, repeat: Infinity, ease: "easeInOut", delay: coords.delay },
         opacity: { duration: 0.3 }
       }}
-      className="absolute px-4 py-2 bg-white/80 backdrop-blur-sm border border-white/50 rounded-full shadow-sm text-[13px] text-slate-700 whitespace-nowrap active:bg-blue-50 active:scale-90 transition-all z-10"
+      className="absolute px-5 py-3 bg-[#e8dec5] border-2 border-[#4a0404]/10 rounded-full shadow-sm text-[13px] font-medium text-[#4a0404] whitespace-nowrap active:bg-[#4a0404] active:text-white transition-all z-10"
       style={{
         left: coords.left,
         top: coords.top,
-        transform: 'translateX(-50%)' // 기준점을 중앙으로 잡아 쏠림 방지
+        transform: 'translateX(-50%)'
       }}
     >
       {text}
@@ -76,10 +74,8 @@ const FloatingKeyword = ({ text, index, onClick }) => {
   );
 };
 
-
-
 export default function App() {
-  const [step, setStep] = useState('intro'); // intro, collection, result
+  const [step, setStep] = useState('intro');
   const [currentChapter, setCurrentChapter] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
   const [visibleKeywords, setVisibleKeywords] = useState([]);
@@ -93,8 +89,6 @@ export default function App() {
   const handleKeywordClick = (keyword) => {
     setSelectedItems([...selectedItems, keyword]);
     setVisibleKeywords(visibleKeywords.filter(k => k !== keyword));
-    
-    // 햅틱 피드백 (지원되는 기기에서)
     if (window.navigator.vibrate) window.navigator.vibrate(10);
   };
 
@@ -113,19 +107,18 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 text-slate-900 font-sans selection:bg-blue-100 overflow-hidden flex flex-col">
-      
-      {/* Header */}
-      <header className="p-6 flex justify-between items-center z-10">
-        <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
-          odd casa 사전 체크 <span className="text-blue-500">[beta]</span>
-        </span>
+    <div className="min-h-screen bg-[#f8f1e1] text-[#4a0404] font-serif selection:bg-[#4a0404] selection:text-white overflow-hidden flex flex-col">
+      <header className="p-8 flex flex-col items-center z-10 space-y-2">
+        <div className="flex items-center gap-3 text-[10px] tracking-[0.3em] text-[#4a0404]/60 uppercase font-bold">
+          <span>✧ ODD CASA ADMISSION ✧</span>
+        </div>
+        <h1 className="text-2xl font-normal tracking-tight border-b border-[#4a0404]/20 pb-2">
+          사전 체크 <span className="text-[#a61c1c] font-bold">[BETA]</span>
+        </h1>
       </header>
 
-      <main className="flex-1 flex flex-col px-6 relative">
+      <main className="flex-1 flex flex-col px-6 relative max-w-md mx-auto w-full">
         <AnimatePresence mode="wait">
-          
-          {/* STEP: INTRO */}
           {step === 'intro' && (
             <motion.div 
               key="intro"
@@ -135,27 +128,25 @@ export default function App() {
               className="flex-1 flex flex-col justify-center items-center text-center space-y-8"
             >
               <div className="space-y-4">
-                <h1 className="text-3xl font-bold leading-tight text-slate-800">
+                <h1 className="text-4xl font-bold leading-tight text-[#4a0404]">
                   요즘 진짜 어때요?<br />
-                  <span className="text-blue-600 font-extrabold underline decoration-blue-200 decoration-8 underline-offset-4">숨겨진 진심</span>을 찾아봐요.
+                  <span className="text-[#a61c1c] font-black underline decoration-[#a61c1c]/10 decoration-8 underline-offset-4 italic">숨겨진 진심</span>을 찾아봐요.
                 </h1>
-                <p className="text-slate-500 leading-relaxed">
-                  내 마음을 스쳐 지나가는 말들을<br />
-                  항아리에 툭, 담아보세요.
+                <p className="text-[#4a0404]/50 leading-relaxed font-medium">
+                  내 마음을 스쳐 지나가는 말들을<br />항아리에 툭, 담아보세요.
                 </p>
               </div>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setStep('collection')}
-                className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-200 flex items-center gap-2"
+                className="px-12 py-5 bg-[#4a0404] text-[#f8f1e1] rounded-xl font-bold shadow-2xl flex items-center gap-2 uppercase tracking-[0.3em] text-sm"
               >
                 항아리 챙기기
               </motion.button>
             </motion.div>
           )}
 
-          {/* STEP: COLLECTION */}
           {step === 'collection' && (
             <motion.div 
               key="collection"
@@ -164,60 +155,49 @@ export default function App() {
               exit={{ opacity: 0 }}
               className="flex-1 flex flex-col"
             >
-              <div className="mt-4">
-                <span className="text-blue-600 font-bold text-sm uppercase tracking-wider">Chapter {currentChapter + 1}</span>
-                <h2 className="text-2xl font-bold mt-1">{CHAPTERS[currentChapter].title}</h2>
-                <p className="text-slate-500 text-sm mt-1">{CHAPTERS[currentChapter].description}</p>
+              <div className="mt-4 text-center">
+                <span className="text-[#a61c1c] font-bold text-xs uppercase tracking-[0.2em]">Chapter {currentChapter + 1}</span>
+                <h2 className="text-2xl font-bold mt-1 text-[#4a0404]">{CHAPTERS[currentChapter].title}</h2>
+                <p className="text-[#4a0404]/50 text-sm mt-1 italic">{CHAPTERS[currentChapter].description}</p>
               </div>
 
-              {/* Floating Area */}
-              <div className="flex-1 relative mt-4 overflow-hidden">
+              <div className="flex-1 relative mt-4 w-full overflow-visible">
                 <AnimatePresence>
                   {visibleKeywords.map((keyword, idx) => (
-                    <FloatingKeyword 
-                      key={keyword} 
-                      text={keyword} 
-                      index={idx}
-                      onClick={handleKeywordClick} 
-                    />
+                    <FloatingKeyword key={keyword} text={keyword} index={idx} onClick={handleKeywordClick} />
                   ))}
-
                 </AnimatePresence>
-                
                 {visibleKeywords.length === 0 && (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="absolute inset-0 flex items-center justify-center text-slate-400 italic text-sm"
-                  >
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 flex items-center justify-center text-[#4a0404]/30 italic text-sm">
                     이 챕터에서 더 담을 마음이 있나요?
                   </motion.div>
                 )}
               </div>
 
-              {/* Bottom UI */}
-              <div className="py-8 flex flex-col items-center gap-6">
-                <div className="relative group">
-                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white animate-bounce">
+              <div className="py-10 flex flex-col items-center gap-8">
+                <div className="relative group scale-110">
+                  <div className="absolute -top-2 -right-2 w-7 h-7 bg-[#a61c1c] rounded-full flex items-center justify-center text-[#f8f1e1] text-[10px] font-bold shadow-lg border-2 border-[#f8f1e1] z-20 animate-bounce">
                     {selectedItems.length}
                   </div>
-                  <div className="w-24 h-24 bg-white rounded-3xl shadow-inner border-2 border-slate-100 flex items-center justify-center relative overflow-hidden">
-                    <div className={`absolute bottom-0 w-full bg-blue-100 transition-all duration-500 ease-out`} style={{ height: `${Math.min(selectedItems.length * 5, 100)}%` }} />
-                    <ShoppingBasket size={40} className="text-slate-400 relative z-10" />
+                  <div className="relative w-28 h-20 bg-slate-800 rounded-b-[40px] rounded-t-[10px] border-b-4 border-slate-900 shadow-xl overflow-hidden">
+                    <motion.div animate={{ height: `${Math.min(selectedItems.length * 5, 85)}%` }} className="absolute bottom-0 w-full bg-gradient-to-t from-orange-600 to-orange-400 opacity-90 transition-all duration-700" />
+                    <div className="absolute top-0 w-full h-full flex justify-around pointer-events-none">
+                       {[1,2,3].map(i => (
+                         <motion.div key={i} animate={{ y: [-10, -40], opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }} className="w-2 h-2 bg-orange-200 rounded-full blur-[1px]" />
+                       ))}
+                    </div>
+                    <div className="absolute top-0 w-full h-3 bg-slate-700 border-b border-slate-900 shadow-inner" />
                   </div>
+                  <div className="absolute -left-3 top-6 w-5 h-8 border-4 border-slate-800 rounded-full -z-10" />
+                  <div className="absolute -right-3 top-6 w-5 h-8 border-4 border-slate-800 rounded-full -z-10" />
                 </div>
-
-                <button
-                  onClick={nextChapter}
-                  className="w-full py-4 bg-white border-2 border-slate-100 rounded-2xl font-bold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all"
-                >
-                  {currentChapter < CHAPTERS.length - 1 ? "다음 챕터로" : "항아리 닫기"}
+                <button onClick={nextChapter} className="w-full py-5 bg-[#4a0404] text-[#f8f1e1] rounded-xl font-bold tracking-[0.2em] shadow-lg active:scale-95 transition-all uppercase text-sm">
+                  {currentChapter < CHAPTERS.length - 1 ? "Next Chapter" : "Close Jar"}
                 </button>
               </div>
             </motion.div>
           )}
 
-          {/* STEP: RESULT */}
           {step === 'result' && (
             <motion.div 
               key="result"
@@ -225,54 +205,36 @@ export default function App() {
               animate={{ opacity: 1, scale: 1 }}
               className="flex-1 flex flex-col justify-center items-center py-10"
             >
-              <div className="bg-white p-8 rounded-[40px] shadow-2xl shadow-blue-100 border border-blue-50 w-full max-w-sm flex flex-col items-center text-center space-y-6">
-                <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center">
-                  <Heart className="text-blue-500 fill-blue-500" size={32} />
+              <div className="bg-[#e8dec5] p-8 rounded-3xl shadow-2xl border border-[#4a0404]/10 w-full max-w-sm flex flex-col items-center text-center space-y-8">
+                <div className="w-20 h-20 bg-[#f8f1e1] rounded-full flex items-center justify-center shadow-inner">
+                  <Heart className="text-[#a61c1c] fill-[#a61c1c]" size={36} />
                 </div>
-                
                 <div className="space-y-2">
-                  <p className="text-slate-400 font-medium">오늘 당신의 마음 풍경</p>
-                  <h2 className="text-2xl font-bold text-slate-800">
-                    "{selectedItems.length}개의 마음 조각"
-                  </h2>
+                  <p className="text-[#4a0404]/40 font-bold uppercase tracking-widest text-[10px]">Your Heart Scene</p>
+                  <h2 className="text-3xl font-bold text-[#4a0404]">"{selectedItems.length} Pieces"</h2>
                 </div>
-
-                <div className="p-5 bg-slate-50 rounded-2xl text-left">
-                  <p className="text-slate-600 leading-relaxed text-sm">
+                <div className="p-6 bg-[#f8f1e1]/50 rounded-2xl text-left border border-[#4a0404]/5">
+                  <p className="text-[#4a0404]/80 leading-relaxed text-sm italic">
                     {selectedItems.length > 10 
                       ? "지금은 마음의 방어막이 조금 얇아진 상태군요. 괜찮은 척하느라 에너지를 많이 썼을 거예요. 오늘은 아무것도 증명하지 않아도 돼요."
                       : "생각보다 덤덤하게 잘 지나오고 있네요. 하지만 항아리에 담은 것만으로도 고민의 실체는 조금 더 선명해졌을 거예요."}
                   </p>
                 </div>
-
-                <div className="w-full pt-4 space-y-3">
-                  <button className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-100">
-                    <Share2 size={18} /> 이미지로 저장하기
+                <div className="w-full pt-4 space-y-4">
+                  <button className="w-full py-5 bg-[#4a0404] text-[#f8f1e1] rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg tracking-widest uppercase text-xs">
+                    <Share2 size={16} /> Save Image
                   </button>
-                  <button 
-                    onClick={reset}
-                    className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold flex items-center justify-center gap-2"
-                  >
-                    <RefreshCcw size={18} /> 다시 비우기
+                  <button onClick={reset} className="w-full py-4 text-[#4a0404]/60 font-bold flex items-center justify-center gap-2 hover:text-[#4a0404]">
+                    <RefreshCcw size={16} /> Start Over
                   </button>
                 </div>
               </div>
-              
-              <p className="mt-8 text-xs text-slate-400 text-center leading-loose">
-                고민이 있다는 건, 더 나아지고 싶다는 증거이기도 해요.<br />
-                오늘 정말 수고 많았어요.
-              </p>
             </motion.div>
           )}
-
         </AnimatePresence>
       </main>
-
-      {/* Footer Info */}
-      <footer className="p-6 text-center">
-        <p className="text-[10px] text-slate-300 tracking-tighter uppercase">
-          This record is not stored anywhere. only for your heart.
-        </p>
+      <footer className="p-8 text-center">
+        <p className="text-[9px] text-[#4a0404]/20 tracking-[0.2em] uppercase font-medium">✧ odd casa: this record is only for your heart ✧</p>
       </footer>
     </div>
   );
