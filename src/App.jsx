@@ -71,6 +71,84 @@ const FloatingKeyword = ({ text, index, onClick }) => {
   );
 };
 
+// 항아리의 형태와 크기는 Tailwind 높이 클래스나 absolute 배치에 의존하지 않는다.
+const WorryCauldron = ({ count }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="160"
+    height="144"
+    viewBox="0 0 180 162"
+    role="img"
+    aria-label={`고민 ${count}개를 담은 항아리`}
+    style={{
+      display: 'block',
+      width: 160,
+      height: 144,
+      minWidth: 160,
+      minHeight: 144,
+      flexShrink: 0,
+      alignSelf: 'center',
+      marginBottom: 16,
+      overflow: 'visible'
+    }}
+  >
+    {/* 손잡이부터 그린 뒤 몸통을 덮는다. CSS 위치나 z-index에 의존하지 않는다. */}
+    <path
+      d="M44 84 C18 77 17 117 42 120 M136 84 C162 77 163 117 138 120"
+      fill="none"
+      stroke="#191919"
+      strokeWidth="8"
+      strokeLinecap="round"
+    />
+    {/* 몸통은 선택 개수와 무관하게 항상 그린다. */}
+    <path
+      data-part="body"
+      d="M42 76 C32 92 34 123 48 138 C65 155 115 155 132 138 C146 123 148 92 138 76 Z"
+      fill="#191919"
+    />
+    <path
+      d="M49 103 C46 119 53 134 65 140"
+      fill="none"
+      stroke="#484848"
+      strokeWidth="4"
+      strokeLinecap="round"
+      opacity="0.6"
+    />
+    {/* 검은 솥과 주황색 입구·흘러내리는 액체 */}
+    <ellipse cx="90" cy="78" rx="52" ry="15" fill="#ff8c1a" />
+    <ellipse cx="90" cy="75" rx="44" ry="10" fill="#242424" />
+    <path
+      d="M39 78 C57 89 121 90 141 78 L139 87 C135 90 131 90 128 91 L128 100 C128 108 117 108 117 100 L117 94 L101 96 L101 110 C101 118 90 118 90 110 L90 96 L75 95 L75 102 C75 110 64 110 64 102 L64 93 L56 91 L56 103 C56 112 44 112 44 103 L44 89 Z"
+      fill="#ff8c1a"
+    />
+    <path
+      d="M47 76 C67 64 114 64 134 75"
+      fill="none"
+      stroke="#ffc56b"
+      strokeWidth="3"
+      strokeLinecap="round"
+    />
+    {/* 애니메이션은 거품에만 적용한다. 몸통 크기는 움직이지 않는다. */}
+    {[0, 1, 2].map(index => (
+      <motion.circle
+        key={index}
+        cx={62 + index * 27}
+        cy="46"
+        r={index === 1 ? 5 : 4}
+        fill="#ff961b"
+        initial={{ opacity: 0 }}
+        animate={{ cy: [46, 16], opacity: [0, 1, 0] }}
+        transition={{ duration: 2.6, repeat: Infinity, delay: index * 0.65, ease: 'easeOut' }}
+      />
+    ))}
+    <circle cx="151" cy="50" r="14" fill="#a61c1c" stroke="#f8f1e1" strokeWidth="2" />
+    <text x="151" y="50" dy="0.35em" textAnchor="middle" fill="#f8f1e1" fontSize="12" fontWeight="700">
+      {count}
+    </text>
+  </svg>
+);
+
+
 export default function App() {
   const [step, setStep] = useState('intro');
   const [currentChapter, setCurrentChapter] = useState(0);
@@ -176,40 +254,7 @@ export default function App() {
               {/* Cauldron & Button Section */}
               <div className="pb-10 flex flex-col items-center gap-6 shrink-0">
                 
-                {/* Cauldron UI (Fixed & Restored) */}
-                <div className="relative w-32 h-24 mb-4">
-                  {/* Badge */}
-                  <div className="absolute -top-1 -right-1 w-7 h-7 bg-[#a61c1c] rounded-full flex items-center justify-center text-[#f8f1e1] text-[11px] font-bold z-30 shadow-md">
-                    {selectedItems.length}
-                  </div>
-                  
-                  {/* Cauldron Body */}
-                  <div className="absolute bottom-0 left-0 right-0 h-20 bg-[#1a1a1a] rounded-b-[50px] rounded-t-[10px] border-2 border-[#4a0404]/30 shadow-2xl z-10 overflow-hidden">
-                    {/* Liquid fill */}
-                    <motion.div 
-                      animate={{ height: `${Math.min(selectedItems.length * 8, 90)}%` }}
-                      className="absolute bottom-0 w-full bg-gradient-to-t from-orange-600 to-orange-400 transition-all duration-1000"
-                    />
-                    {/* Bubbles */}
-                    <div className="absolute inset-0 flex justify-around items-end">
-                      {[1,2,3].map(i => (
-                        <motion.div
-                          key={i}
-                          animate={{ y: [0, -60], opacity: [0, 1, 0] }}
-                          transition={{ duration: 2, repeat: Infinity, delay: i * 0.6 }}
-                          className="w-2 h-2 bg-orange-100 rounded-full blur-[1px]"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* Cauldron Rim */}
-                  <div className="absolute top-4 left-[-4px] right-[-4px] h-4 bg-[#2a2a2a] rounded-full border border-[#4a0404]/20 z-20" />
-                  
-                  {/* Cauldron Handles */}
-                  <div className="absolute left-[-12px] top-10 w-6 h-8 border-4 border-[#1a1a1a] rounded-full z-0" />
-                  <div className="absolute right-[-12px] top-10 w-6 h-8 border-4 border-[#1a1a1a] rounded-full z-0" />
-                </div>
+                <WorryCauldron count={selectedItems.length} />
 
                 <button
                   onClick={nextChapter}
